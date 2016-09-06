@@ -5,6 +5,14 @@ var app = angular.module("TodoApp", ["ngRoute"])
 // Routing has to do with the url in your browser
 app.config(function($routeProvider) {
   $routeProvider.
+  when('/', {
+    templateUrl: 'partials/login.html',
+    controller: 'LoginCtrl'
+  }).
+  when('/login', {
+    templateUrl: 'partials/login.html',
+    controller: 'LoginCtrl'
+  }).
     when('/items/list', {
       // only the U in Url is capitalized!!!
       templateUrl: 'partials/item-list.html',
@@ -19,4 +27,13 @@ app.config(function($routeProvider) {
       controller: "ItemViewCtrl"
     }).
     otherwise('/items/list');
+});
+
+app.run( ($location, FBCreds) => {
+  let creds = FBCreds;
+  let authConfig = {
+    apiKey: creds.key,
+    authDomain: creds.authDomain
+  };
+  firebase.initializeApp(authConfig);
 });
