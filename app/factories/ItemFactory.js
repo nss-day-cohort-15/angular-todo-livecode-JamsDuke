@@ -1,11 +1,11 @@
 "use strict";
 
 app.factory("ItemStorage", ($q, $http, FirebaseURL) => {
-  let getItemList = function(){
+  let getItemList = (user) => {
     let items = [];
     //This is the Angular way of doing promises
     return $q((resolve, reject)=>{
-      $http.get(`${FirebaseURL}/items.json`)
+      $http.get(`${FirebaseURL}/items.json?orderBy="uid"&equalTo="${user}"`)
       //Angular does the parsing of the object for you, just like AJAX or getJSON
       .success((itemObject)=>{
         if (itemObject !== null){
@@ -19,6 +19,31 @@ app.factory("ItemStorage", ($q, $http, FirebaseURL) => {
         }
       })
       .error((error)=>{
+        reject(error);
+      });
+    });
+  };
+
+  let getSingleItem = (itemId) => {
+    return $q( (resolve, reject) => {
+      $http.get(`${FirebaseURL}items/${itemId}.json`)
+      .success( (itemObject) => {
+        resolve(itemObject);
+      })
+      .error( (error) => {
+        reject(error);
+      });
+    });
+  };
+
+  let updateItem = (itemId, editedItem) => {
+    return $q( (resolve, reject) => {
+      $http.patch(`${FirebaseURL}items/${itemId}.json`,
+        JSON.stringify(editedItem))
+      .success( (objFromFirebase) => {
+        resolve(objFromFirebase);
+      })
+      .error( (error) => {
         reject(error);
       });
     });
@@ -44,5 +69,5 @@ let deleteItem = (itemId) => {
     });
   });
 };
-  return {getItemList, postNewItem, deleteItem};
+  return {getItemList, postNewItem, deleteItem, updateItem, getSingleItem};
 });

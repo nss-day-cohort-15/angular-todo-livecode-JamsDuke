@@ -24,8 +24,12 @@ $scope.register = () => {
 $scope.login = () => {
   console.log("you clicked login");
   AuthFactory.loginUser($scope.account)
-  .then( () => {
+  .then(function(data) {
+    if (data) {
     $window.location.href = "#/items/list";
+    } else {
+    $window.location.href = "#/login";
+    }
   });
 };
 

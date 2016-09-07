@@ -18,5 +18,14 @@ app.factory("AuthFactory", function() {
       //....
     });
   };
-  return {createUser, loginUser};
+
+  let logoutUser = function() {
+    return firebase.auth().signOut();
+  };
+
+  let isAuthenticated = function() {
+    return (firebase.auth().currentUser) ? true : false;
+  };
+
+  return {createUser, loginUser, logoutUser, isAuthenticated};
 });

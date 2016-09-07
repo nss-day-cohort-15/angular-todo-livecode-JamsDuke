@@ -3,6 +3,15 @@
 var app = angular.module("TodoApp", ["ngRoute"])
 .constant('FirebaseURL', "https://todo-list-a97ea.firebaseio.com/");
 // Routing has to do with the url in your browser
+
+let isAuth = (AuthFactory) => new Promise( (resolve, reject) => {
+  if (AuthFactory.isAuthenticated()) {
+    resolve();
+  } else {
+    reject();
+  }
+});
+
 app.config(function($routeProvider) {
   $routeProvider.
   when('/', {
@@ -16,17 +25,25 @@ app.config(function($routeProvider) {
     when('/items/list', {
       // only the U in Url is capitalized!!!
       templateUrl: 'partials/item-list.html',
-      controller: 'ItemListCtrl'
+      controller: 'ItemListCtrl',
+      resolve: {isAuth}
     }).
     when('/items/new', {
       templateUrl: 'partials/item-form.html',
-      controller: 'ItemNewCtrl'
+      controller: 'ItemNewCtrl',
+      resolve: {isAuth}
     }).
-    when("/items/:itemId", {
+    when("/items/view/:itemId", {
       templateUrl: "partials/item-details.html",
-      controller: "ItemViewCtrl"
+      controller: "ItemViewCtrl",
+      resolve: {isAuth}
     }).
-    otherwise('/items/list');
+    when("/items/view/:itemId/edit", {
+      templateUrl: "partials/item-form.html",
+      controller: "ItemEditCtrl",
+      resolve: {isAuth}
+    }).
+    otherwise('/');
 });
 
 app.run( ($location, FBCreds) => {
